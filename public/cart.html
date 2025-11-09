@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Carrito</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/productos.css" />
+</head>
+
+<body>
+
+    <header>
+        <nav class="barra-navegacion">
+            <h1 class="logo">🛒 Carrito</h1>
+            <ul class="menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="productos.html">Productos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="contenedor-carrito">
+
+        <!-- Pop up -->
+        <!-- el id lo uso en js y la clase en css -->
+        <div id="modal-terminos" class="ventana-oculta">
+            <div class="contenido-ventana">
+                <h3>Términos y condiciones</h3>
+                <p>Antes de finalizar la compra debes aceptar nuestros términos y condiciones.</p>
+                <p><a href="https://www.amazon.com.mx/gp/help/customer/display.html?nodeId=GLSBYFE9MGKKQXXM"
+                        target="_blank" rel="noopener">Leer
+                        términos de uso</a></p>
+                <div>
+                    <button id="btn-aceptar-terminos" class="btn-agregar">Aceptar</button>
+                    <button id="btn-rechazar-terminos" class="btn-menos">Rechazar</button>
+                </div>
+            </div>
+        </div>
+
+        <section id="lista-carrito">
+            <!-- Items se inyectan por JS -->
+        </section>
+
+        <div id="carrito-container">
+            <div id="lista-carrito"></div>
+            <div id="resumen-carrito">
+                <h3>Resumen</h3>
+                <div id="total-final">Total: $0.00</div>
+                <button id="btn-finalizar">Finalizar compra</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="./js/main.js"></script>
+    <script src="./js/cart.js"></script>
+</body>
+
+</html>

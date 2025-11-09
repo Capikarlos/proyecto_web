@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acceso al sistema</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/login.css" />
+</head>
+
+<body>
+    <header>
+        <nav class="barra-navegacion">
+            <h1 class="logo">Acceso</h1>
+            <ul class="menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="contenedor-login">
+        <h2>Inicio de sesión</h2>
+        <!--  -->
+        <form id="formulario-login">
+            <!-- Nombre de usuario -->
+            <label for="usuario">Nombre de usuario:</label>
+            <input type="text" id="usuario" name="usuario" required />
+            <!-- Contraseña -->
+            <label for="clave">Contraseña:</label>
+            <input type="password" id="clave" name="clave" required />
+            <!-- Botón de acceso -->
+            <button type="submit" id="btn-acceder">Acceder</button>
+        </form>
+        <!-- Mensaje de error -->
+        <p id="mensaje-error" class="error-oculto">Usuario o contraseña inválidos</p>
+    </main>
+
+    <script src="./js/login.js"></script>
+</body>
+</html>

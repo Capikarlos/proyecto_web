@@ -1,0 +1,11 @@
+[
+    {
+        "id": 3,
+        "nombre": "Teclado Mecánico",
+        "precio": 1299.9,
+        "img": "https://cdn.gameplanet.com/wp-content/uploads/2022/09/05080211/740617313208-alloy-origins-rojo-1.jpg",
+        "cantidad": 4,
+        "stock": 10,
+        "categoria": ""
+    }
+]

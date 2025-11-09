@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tienda - Productos</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/productos.css" />
+</head>
+
+<body>
+    <header>
+        <nav class="barra-navegacion">
+            <h1 class="logo">🛍️ Tienda</h1>
+            <ul class="menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html">Acceso</a></li>
+            </ul>
+
+            <!-- Botón carrito -->
+            <button id="btn-carrito" class="btn-carrito" aria-label="Ver carrito">
+                🛒<span id="contador-carrito" class="badge">0</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="main-productos">
+        <section id="lista-productos" class="grid-productos" aria-live="polite">
+            <!-- tarjetas inyectadas por JS -->
+        </section>
+    </main>
+
+    <script src="./js/productos.js"></script>
+</body>
+
+</html>

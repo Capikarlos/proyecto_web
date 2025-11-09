@@ -1,0 +1,53 @@
+/* contacto */
+.contenedor-contacto {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-contacto h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.contenedor-contacto label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.contenedor-contacto input,
+.contenedor-contacto textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.botones-contacto {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.botones-contacto button {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+#btn-enviar {
+    background-color: #2563eb;
+}
+
+#btn-cancelar {
+    background-color: #dc2626;
+}
+

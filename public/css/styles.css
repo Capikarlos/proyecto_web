@@ -1,0 +1,108 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 10px 20px;
+}
+
+/*  */
+.barra-navegacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+.menu li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+.menu li.activo a {
+    color: #ffd700;
+}
+
+.bienvenida {
+    text-align: center;
+    padding: 50px;
+}
+
+#btn-oferta {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* --- Ventana Modal --- */
+.contenido-ventana {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+.ventana-oculta {/* --- Ocultar --- */
+    opacity: 0;
+    pointer-events: none;
+}
+.ventana-visible {/* --- Mostrar --- */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* contacto */
+.mensaje-oculto {
+    display: none;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* Login */
+.error-oculto {
+    display: none;
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+#mensaje-error:not(.error-oculto) {
+    display: block;
+}
+
+/* --- modal --- */
+#ventana-oferta {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
+}
