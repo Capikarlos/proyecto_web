@@ -5,38 +5,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Acceso al sistema</title>
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="stylesheet" href="./css/login.css" />
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/login.css">
 </head>
 
 <body>
-    <header>
-        <nav class="barra-navegacion">
-            <h1 class="logo">Acceso</h1>
-            <ul class="menu">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <main class="contenedor-login">
-        <h2>Inicio de sesión</h2>
-        <!--  -->
-        <form id="formulario-login">
-            <!-- Nombre de usuario -->
-            <label for="usuario">Nombre de usuario:</label>
-            <input type="text" id="usuario" name="usuario" required />
-            <!-- Contraseña -->
-            <label for="clave">Contraseña:</label>
-            <input type="password" id="clave" name="clave" required />
-            <!-- Botón de acceso -->
+        <h2>Iniciar sesión</h2>
+        <form id="formulario-login" novalidate>
+            <label for="usuario">Nombre de usuario</label>
+            <input id="usuario" name="usuario" type="text" required minlength="3" maxlength="15">
+
+            <label for="clave">Contraseña</label>
+            <input id="clave" name="clave" type="password" required minlength="4" maxlength="40">
+
             <button type="submit" id="btn-acceder">Acceder</button>
         </form>
-        <!-- Mensaje de error -->
-        <p id="mensaje-error" class="error-oculto">Usuario o contraseña inválidos</p>
+
+        <p id="mensaje-error" class="error-oculto"></p>
+        <p>¿No tienes cuenta? <a href="register.html">Crear cuenta</a></p>
     </main>
 
-    <script src="./js/login.js"></script>
+    <!-- Solo scripts necesarios -->
+    <script src="/js/login.js"></script>
 </body>
+
 </html>

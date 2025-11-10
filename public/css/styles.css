@@ -33,11 +33,13 @@ header {
     margin: 0;
     padding: 0;
 }
+
 .menu li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
 }
+
 .menu li.activo a {
     color: #ffd700;
 }
@@ -64,11 +66,15 @@ header {
     text-align: center;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
-.ventana-oculta {/* --- Ocultar --- */
+
+.ventana-oculta {
+    /* --- Ocultar --- */
     opacity: 0;
     pointer-events: none;
 }
-.ventana-visible {/* --- Mostrar --- */
+
+.ventana-visible {
+    /* --- Mostrar --- */
     opacity: 1;
     pointer-events: auto;
 }
@@ -88,6 +94,7 @@ header {
     text-align: center;
     font-weight: bold;
 }
+
 #mensaje-error:not(.error-oculto) {
     display: block;
 }
@@ -105,4 +112,90 @@ header {
     align-items: center;
     z-index: 9999;
     transition: opacity 0.4s ease;
+}
+
+/* === MENÚ DE NAVEGACIÓN === */
+.barra-navegacion {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.boton-menu {
+    font-size: 28px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 10px;
+    padding: 6px 12px;
+    backdrop-filter: blur(5px);
+    transition: background 0.3s;
+}
+
+.boton-menu:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.fondo-difuminado {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 250px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease;
+    padding-top: 20px;
+    z-index: 1000;
+    border-radius: 0 12px 12px 0;
+}
+
+.menu-lateral.mostrar {
+    left: 0;
+}
+
+.fondo-difuminado.mostrar {
+    display: block;
+}
+
+.encabezado-menu {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.menu-lateral ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-lateral ul li {
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.menu-lateral ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.menu-lateral ul li a:hover {
+    color: #007BFF;
 }

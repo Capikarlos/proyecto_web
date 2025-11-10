@@ -10,21 +10,12 @@
 </head>
 
 <body>
-    <header>
-        <nav class="barra-navegacion">
-            <h1 class="logo">🛍️ Tienda</h1>
-            <ul class="menu">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-                <li><a href="login.html">Acceso</a></li>
-            </ul>
 
-            <!-- Botón carrito -->
-            <button id="btn-carrito" class="btn-carrito" aria-label="Ver carrito">
-                🛒<span id="contador-carrito" class="badge">0</span>
-            </button>
-        </nav>
-    </header>
+    <div id="menu-contenedor"></div>
+    <!-- Botón carrito -->
+    <button id="btn-carrito" class="btn-carrito" aria-label="Ver carrito">
+        🛒<span id="contador-carrito" class="badge">0</span>
+    </button>
 
     <main class="main-productos">
         <section id="lista-productos" class="grid-productos" aria-live="polite">
@@ -32,6 +23,8 @@
         </section>
     </main>
 
+    <script src="/js/menu.js"></script>
+    <script src="/js/sesion.js"></script>
     <script src="./js/productos.js"></script>
 </body>
 
