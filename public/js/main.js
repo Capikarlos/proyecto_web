@@ -1,34 +1,3 @@
-// --- VARIABLES GLOBALES --- //
-const botonOferta = document.getElementById("btn-oferta");
-const ventanaOferta = document.getElementById("ventana-oferta");
-const cerrarVentana = document.getElementById("cerrar-ventana");
-const enlaceUsuario = document.getElementById("usuario-link");
-const elementosMenu = document.querySelectorAll(".menu li");
-
-// --- MENÚ DESPLEGABLE --- //
-elementosMenu.forEach(elemento => {
-    elemento.addEventListener("mouseenter", () => {
-        elemento.classList.add("activo");
-    });
-    elemento.addEventListener("mouseleave", () => {
-        elemento.classList.remove("activo");
-    });
-});
-
-
-// --- SESIÓN DEL USUARIO --- //
-// Aquí simulamos que el usuario está logueado
-// (más adelante lo haremos real con backend y sesiones)
-const usuarioGuardado = sessionStorage.getItem("usuario");
-if (usuarioGuardado) {
-    enlaceUsuario.textContent = `${usuarioGuardado}`;
-    enlaceUsuario.href = "#";
-} else {
-    enlaceUsuario.textContent = "Acceder";
-    enlaceUsuario.href = "login.html";
-}
-
-
 /* pop up*/
 // Mostrar ventana modal automáticamente al cargar la página
 let cookies = localStorage.getItem('cookies') === 'true';
@@ -59,4 +28,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 }
-

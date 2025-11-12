@@ -4,31 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto Web</title>
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="./css/index.css">
+    <title>Página Principal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/perfil.css">
+    <link rel="stylesheet" href="/css/popup.css"> <!-- CSS NUEVO PARA EL POP-UP -->
 </head>
 
 <body>
-    <main>
-        <section class="bienvenida">
-            <h2>Bienvenido a nuestra tienda en línea</h2>
-            <p>Explora nuestros productos, envíanos tus comentarios y disfruta de una experiencia web completa con
-                sesiones seguras y base de datos real.</p>
+
+    <!-- El menú se carga aquí -->
+    <div id="menu-contenedor"></div>
+
+    <main class="contenedor-principal">
+        <h1>Bienvenido a tu Página Principal</h1>
+        <p>Esta es la página de inicio. Solo deberías ver esto si has iniciado sesión.</p>
+
+        <!-- 
+          NUEVA SECCIÓN DE PERFIL
+          (Eliminada la etiqueta <img> para el avatar)
+        -->
+        <section class="tarjeta-perfil">
+            <h2>Tu Perfil</h2>
+            <div class="perfil-contenido">
+                <!-- <img id="perfil-avatar" ... >  <- ELIMINADO -->
+                <div class="perfil-info">
+                    <h3 id="perfil-nombre">Cargando nombre...</h3>
+                    <p><strong>Usuario:</strong> <span id="perfil-username">...</span></p>
+                    <p><strong>Email:</strong> <span id="perfil-email">...</span></p>
+                    <p><strong>Bio:</strong> <span id="perfil-bio">...</span></p>
+                </div>
+            </div>
         </section>
+
     </main>
 
-    <!-- Ventana emergente -->
+    <!-- HTML NUEVO: Ventana emergente de Cookies -->
     <div id="ventana-oferta" class="ventana-oculta">
         <div class="contenido-ventana">
             <h3>Política de Cookies</h3>
-            <p>Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de cookies.</p>
+            <p>Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de
+                cookies.</p>
             <button id="cerrar-ventana">Aceptar</button>
         </div>
     </div>
 
+    <!-- Cargamos el menú (que maneja la sesión) y el nuevo script de perfil -->
     <script src="/js/menu.js"></script>
-    <script src="/js/sesion.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="/js/perfil.js"></script>
+    <script src="/js/main.js"></script> <!-- SCRIPT NUEVO (con .js) -->
 </body>
+
 </html>

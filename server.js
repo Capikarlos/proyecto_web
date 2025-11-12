@@ -11,8 +11,8 @@ import cors from 'cors';
 // Necesario para __dirname en ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const PORT = process.env.PORT || 3000;
+
 // Config DB
 import pkg from 'pg';
 const { Pool } = pkg;
@@ -25,8 +25,8 @@ const pool = new Pool({
 });
 // probar conexión
 pool.connect()
-    .then(client => { client.release(); console.log('✅ Conectado a PostgreSQL'); })
-    .catch(err => console.error('❌ Error conectando a PostgreSQL:', err.message));
+    .then(client => { client.release(); console.log('Conectado a PostgreSQL'); })
+    .catch(err => console.error('Error conectando a PostgreSQL:', err.message));
 
 // middlewares
 app.use(express.json());
@@ -79,21 +79,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //RUTAS SIMPLES DE AUTENTICACIÓN
-// POST /api/register para registrar nuevo usuario
+// registrar nuevo usuario
 app.post('/api/register', async (req, res) => {
-    const { nombre_usuario, password, email } = req.body;
-    if (!nombre_usuario || !password) {
+    const { nombre_usuario, password, email, nombre_completo } = req.body;
+    if (!nombre_usuario || !password || !email) {
         return res.status(400).json({ error: 'Faltan campos' });
     }
     try {
-        const q = 'INSERT INTO usuarios (nombre_usuario, password, email, rol) VALUES ($1,$2,$3,$4) RETURNING id, nombre_usuario, email';
-        const valores = [nombre_usuario, password, email || null, 'user'];
+        // El insert
+        const q = 'INSERT INTO usuarios (nombre_usuario, password, email, rol, nombre_completo) VALUES ($1,$2,$3,$4,$5) RETURNING id, nombre_usuario, email, nombre_completo';
+        const valores = [nombre_usuario, password, email, 'user', nombre_completo || null]; // MODIFICADO
         const r = await pool.query(q, valores);
         const usuario = r.rows[0];
 
-        // crear sesión
-        req.session.usuario = { id: usuario.id, nombre_usuario: usuario.nombre_usuario, email: usuario.email };
+        // MODIFICADO: Guardamos los nuevos datos en la sesión
+        req.session.usuario = { 
+            id: usuario.id, 
+            nombre_usuario: usuario.nombre_usuario, 
+            email: usuario.email,
+            nombre_completo: usuario.nombre_completo
+        };
         req.session.ultimaActividad = Date.now();
+        req.session.carrito = []; // AÑADIDO: Buena práctica inicializar carrito aquí
 
         return res.json({ ok: true, user: req.session.usuario });
     } catch (err) {
@@ -113,7 +120,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     try {
-        const q = 'SELECT id, nombre_usuario, password, email FROM usuarios WHERE nombre_usuario = $1';
+        const q = 'SELECT id, nombre_usuario, password, email, nombre_completo FROM usuarios WHERE nombre_usuario = $1';
         const r = await pool.query(q, [nombre_usuario]);
         if (r.rowCount === 0) {
             return res.status(401).json({ error: 'Usuario no encontrado.' });
@@ -131,8 +138,11 @@ app.post('/api/login', async (req, res) => {
             id: usuarioDB.id,
             nombre_usuario: usuarioDB.nombre_usuario,
             email: usuarioDB.email,
+            nombre_completo: usuarioDB.nombre_completo,
+            biografia: usuarioDB.biografia
         };
         req.session.ultimaActividad = Date.now();
+        req.session.carrito = [];
 
         return res.json({ ok: true, user: req.session.usuario });
     } catch (err) {
@@ -141,16 +151,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-
-app.get('/api/tiempo-restante', (req, res) => {
-    if (!req.session || !req.session.usuario || !req.session.ultimaActividad) {
-        return res.status(401).json({ error: 'No hay sesión' });
-    }
-    const ahora = Date.now();
-    const elapsed = ahora - req.session.ultimaActividad;
-    const restanteMs = Math.max(0, TIEMPO_INACTIVIDAD - elapsed);
-    return res.json({ segundos: Math.ceil(restanteMs / 1000) });
-});
 // POST
 app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
@@ -164,6 +164,134 @@ app.get('/api/session', (req, res) => {
     return res.status(401).json({ error: 'No hay sesión activa' });
 });
 
+// --- PEGA EL CÓDIGO QUE FALTA AQUÍ ---
+// Middleware para proteger rutas (esta es la función que faltaba)
+function proteger(req, res, next) {
+    if (req.session && req.session.usuario) {
+        next(); // Tiene sesión, continuar
+    } else {
+        // No tiene sesión, rechazar
+        res.status(401).json({ error: 'No autorizado, debes iniciar sesión' });
+    }
+}
+// En server.js, después de tus otras rutas
+// GET /api/carrito - (Ya la teníamos) Devuelve el carrito del usuario
+app.get('/api/carrito', proteger, (req, res) => {
+    if (!req.session.carrito) {
+        req.session.carrito = [];
+    }
+    res.json(req.session.carrito);
+});
+
+/**
+ * POST /api/carrito/set - Actualiza la cantidad de UN producto.
+ * Esto reemplaza "agregar", "reducir" y "eliminar" en una sola ruta.
+ * Body: { "producto_id": 123, "cantidad": 3 }
+ * Si cantidad es 0, se elimina del carrito.
+ */
+app.post('/api/carrito/set', proteger, async (req, res) => {
+    const { producto_id, cantidad } = req.body;
+    const cant = Number(cantidad);
+
+    if (!producto_id || !Number.isInteger(cant) || cant < 0) {
+        return res.status(400).json({ error: 'Datos inválidos' });
+    }
+
+    if (!req.session.carrito) {
+        req.session.carrito = [];
+    }
+
+    // (Opcional pero RECOMENDADO) Verificar stock antes de añadir
+    // const r = await pool.query('SELECT stock FROM productos WHERE id = $1', [producto_id]);
+    // const stock = r.rows[0]?.stock;
+    // if (Number.isFinite(stock) && cant > stock) {
+    //    return res.status(409).json({ error: 'No hay suficiente stock' });
+    // }
+
+    const idx = req.session.carrito.findIndex(p => p.id === producto_id);
+
+    if (cant === 0) {
+        // Eliminar si la cantidad es 0
+        if (idx > -1) req.session.carrito.splice(idx, 1);
+    } else {
+        // Añadir o Actualizar
+        if (idx > -1) {
+            // Actualizar cantidad
+            req.session.carrito[idx].cantidad = cant;
+        } else {
+            // Producto nuevo, necesitamos sus datos
+            // (Tu lógica anterior de 'agregar' solo guardaba id y cant.
+            // Para un carrito real, DEBEMOS guardar precio, nombre, img)
+            const r = await pool.query('SELECT id, nombre, precio, img, stock, categoria FROM productos WHERE id = $1', [producto_id]);
+            if (r.rowCount === 0) {
+                return res.status(404).json({ error: 'Producto no encontrado' });
+            }
+            
+            const prod = r.rows[0];
+            req.session.carrito.push({
+                id: prod.id,
+                nombre: prod.nombre,
+                precio: Number(prod.precio),
+                img: prod.img,
+                stock: Number(prod.stock),
+                categoria: prod.categoria,
+                cantidad: cant // La cantidad que nos pidieron
+            });
+        }
+    }
+    
+    // Devolvemos el carrito actualizado para que el frontend no tenga que pensar
+    res.json(req.session.carrito);
+});
+
+
+/**
+ * POST /api/compras/finalizar - El paso final.
+ * Lee el carrito de la sesión, lo guarda en la tabla 'compras'
+ * y limpia el carrito de la sesión.
+ */
+app.post('/api/compras/finalizar', proteger, async (req, res) => {
+    const carrito = req.session.carrito;
+    const usuarioId = req.session.usuario.id;
+
+    if (!carrito || carrito.length === 0) {
+        return res.status(400).json({ error: 'Tu carrito está vacío' });
+    }
+
+    // Usamos una transacción para asegurar que todas las inserciones
+    // funcionen o fallen juntas.
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN'); // Iniciar transacción
+
+        for (const item of carrito) {
+            const totalItem = item.precio * item.cantidad;
+            const q = `
+                INSERT INTO compras (usuario_id, producto_id, cantidad, total, estado)
+                VALUES ($1, $2, $3, $4, 'pendiente')
+            `;
+            await client.query(q, [usuarioId, item.id, item.cantidad, totalItem]);
+
+            // (Opcional) Aquí también deberías descontar el stock de la tabla 'productos'
+            // await client.query('UPDATE productos SET stock = stock - $1 WHERE id = $2', [item.cantidad, item.id]);
+        }
+        
+        await client.query('COMMIT'); // Confirmar transacción
+
+        // Limpiar carrito de la sesión
+        req.session.carrito = [];
+
+        res.json({ ok: true, message: 'Compra realizada con éxito' });
+
+    } catch (err) {
+        await client.query('ROLLBACK'); // Revertir en caso de error
+        console.error('Error al finalizar compra:', err);
+        res.status(500).json({ error: 'Error al procesar la compra' });
+    } finally {
+        client.release(); // Liberar el cliente de la pool
+    }
+});
+
 // get
 app.get('/api/productos', async (req, res) => {
     try {
@@ -172,6 +300,49 @@ app.get('/api/productos', async (req, res) => {
     } catch (err) {
         console.error('Error /api/productos:', err.message);
         res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// GET /api/contacto/historial
+// Devuelve los comentarios ANTERIORES del usuario logueado
+app.get('/api/contacto/historial', proteger, async (req, res) => {
+    const usuarioId = req.session.usuario.id;
+    try {
+        const q = 'SELECT comentario, fecha FROM contacto WHERE usuario_id = $1 ORDER BY fecha DESC LIMIT 5';
+        const r = await pool.query(q, [usuarioId]);
+        res.json(r.rows);
+    } catch (err) {
+        console.error('Error en /api/contacto/historial:', err.message);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// POST /api/contacto
+// Guarda un nuevo mensaje de contacto en la BD
+app.post('/api/contacto', async (req, res) => {
+    const { correo, comentario } = req.body;
+    
+    // Validación del lado del servidor (¡importante!)
+    if (!correo || !comentario || comentario.length < 5) {
+        return res.status(400).json({ error: 'Todos los campos son requeridos' });
+    }
+
+    let usuarioId = null;
+    let correoFinal = correo;
+
+    if (req.session && req.session.usuario) {
+        usuarioId = req.session.usuario.id;
+        correoFinal = req.session.usuario.email;
+    }
+
+    try {
+        const q = 'INSERT INTO contacto (correo, comentario, usuario_id) VALUES ($1, $2, $3)';
+        await pool.query(q, [correoFinal, comentario, usuarioId]);
+        res.status(201).json({ ok: true, message: 'Mensaje enviado' });
+
+    } catch (err) {
+        console.error('Error en /api/contacto:', err.message);
+        res.status(500).json({ error: 'Error interno al guardar el mensaje' });
     }
 });
 

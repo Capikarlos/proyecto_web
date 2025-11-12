@@ -1,136 +1,144 @@
-// productos.js
+// productos.js (Refactorizado)
 document.addEventListener("DOMContentLoaded", () => {
     const contenedor = document.getElementById("lista-productos");
-    const btnCarrito = document.getElementById("btn-carrito");
-    const contadorCarrito = document.getElementById("contador-carrito");
 
-    // Cargar carrito desde localStorage
-    const cargarCarritoLocal = () =>
-        JSON.parse(localStorage.getItem("carrito") || "[]");
-    const guardarCarritoLocal = (c) =>
-        localStorage.setItem("carrito", JSON.stringify(c));
+    // --- Variables Globales ---
+    let productosGlobal = []; // Lista de todos los productos
+    let carritoGlobal = [];   // Copia local del carrito del SERVIDOR
 
-    // Actualizar badge carrito
-    function actualizarBadge() {
-        const carrito = cargarCarritoLocal();
-        const totalItems = carrito.reduce((s, it) => s + it.cantidad, 0);
-        contadorCarrito.textContent = totalItems;
-    }
+    async function actualizarItemCarrito(productoId, nuevaCantidad) {
+        try {
+            const res = await fetch('/api/carrito/set', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    producto_id: productoId,
+                    cantidad: nuevaCantidad
+                })
+            });
 
-    // control de stock
-    function agregarAlCarrito(producto) {
-        const carrito = cargarCarritoLocal();
-        const idx = carrito.findIndex((i) => i.id === producto.id);
-
-        if (idx >= 0) {
-            // ya existe -> verificar stock antes de aumentar
-            if (carrito[idx].cantidad >= Number(producto.stock)) {
-                alert(`⚠️ Solo hay ${producto.stock} unidades disponibles de "${producto.nombre}".`);
+            if (res.status === 401) {
+                alert('Tu sesión expiró. Serás redirigido al login.');
+                window.location.href = '/login.html';
                 return;
             }
-            carrito[idx].cantidad += 1;
-        } else {
-            // nuevo producto al carrito
-            carrito.push({
-                id: producto.id,
-                nombre: producto.nombre,
-                precio: Number(producto.precio),
-                img: producto.img || '',
-                cantidad: 1,
-                stock: Number(producto.stock) || 0, //guardamos el stock real
-                categoria: producto.categoria || ''
-            });
-        }
 
-        guardarCarritoLocal(carrito);
-        actualizarBadge();
-        renderizarTarjetas(productosGlobal);
-    }
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Error al actualizar carrito');
+            }
 
-    // Reducir cantidad (si llega a 0, eliminar del carrito)
-    function reducirEnCarrito(productoId) {
-        let carrito = cargarCarritoLocal();
-        const idx = carrito.findIndex((i) => i.id === productoId);
-        if (idx >= 0) {
-            carrito[idx].cantidad -= 1;
-            if (carrito[idx].cantidad <= 0) carrito.splice(idx, 1);
-            guardarCarritoLocal(carrito);
-            actualizarBadge();
+            // El servidor nos devuelve el carrito actualizado
+            carritoGlobal = await res.json();
+
+            // Re-renderizar tarjetas para reflejar el cambio
             renderizarTarjetas(productosGlobal);
+
+            // ¡MAGIA! Notificar al menú que el carrito cambió
+            window.dispatchEvent(new Event('carritoActualizado'));
+
+        } catch (err) {
+            console.error(err);
+            alert(`Error: ${err.message}`);
         }
     }
 
-    // Eliminar totalmente
-    function eliminarDelCarrito(productoId) {
-        let carrito = cargarCarritoLocal();
-        carrito = carrito.filter((i) => i.id !== productoId);
-        guardarCarritoLocal(carrito);
-        actualizarBadge();
-        renderizarTarjetas(productosGlobal);
+
+    /**
+     * ¡MODIFICADO! Estas funciones ahora solo calculan la nueva cantidad
+     * y llaman a la función principal 'actualizarItemCarrito'.
+     */
+    function agregarAlCarrito(producto) {
+        const item = carritoGlobal.find((i) => i.id === producto.id) || { cantidad: 0 };
+        const stock = Number(producto.stock);
+
+        if (Number.isFinite(stock) && item.cantidad >= stock) {
+            alert(`⚠️ Solo hay ${stock} unidades disponibles de "${producto.nombre}".`);
+            return;
+        }
+
+        actualizarItemCarrito(producto.id, item.cantidad + 1);
     }
 
-    // Obtener cantidad en carrito
+    function reducirEnCarrito(productoId) {
+        const item = carritoGlobal.find((i) => i.id === productoId);
+        if (!item) return; // No debería pasar
+        actualizarItemCarrito(productoId, item.cantidad - 1); // El servidor lo borrará si llega a 0
+    }
+
+    function eliminarDelCarrito(productoId) {
+        actualizarItemCarrito(productoId, 0); // Poner cantidad 0 elimina
+    }
+
+    // ¡MODIFICADO! Lee de nuestra variable global
     function cantidadEnCarrito(productoId) {
-        const carrito = cargarCarritoLocal();
-        const item = carrito.find((i) => i.id === productoId);
+        const item = carritoGlobal.find((i) => i.id === productoId);
         return item ? item.cantidad : 0;
     }
 
-    // Productos cargados
-    let productosGlobal = [];
-
-    // Cargar productos desde API
-    async function cargarProductos() {
+    /**
+     * ¡MODIFICADO! Ahora carga productos Y el carrito al iniciar.
+     */
+    async function cargarDatos() {
         try {
-            const resp = await fetch("/api/productos");
-            if (!resp.ok) throw new Error("No se pudieron cargar productos");
-            productosGlobal = await resp.json();
+            // Cargar en paralelo productos y carrito
+            const [respProd, respCart] = await Promise.all([
+                fetch("/api/productos"),
+                fetch("/api/carrito")
+            ]);
+
+            if (!respProd.ok) throw new Error("No se pudieron cargar productos");
+            productosGlobal = await respProd.json();
+
+            if (respCart.ok) { // Si el fetch del carrito está OK (logueado)
+                carritoGlobal = await respCart.json();
+            }
+            // Si respCart no está OK (ej. 401 No logueado), carritoGlobal queda vacío []
+
             renderizarTarjetas(productosGlobal);
-            actualizarBadge();
+
         } catch (err) {
             console.error(err);
             contenedor.innerHTML = "<p>Error cargando productos.</p>";
         }
     }
 
-    // Render de tarjetas
+    // Render de tarjetas (Tu código aquí es perfecto, no necesita casi cambios)
     function renderizarTarjetas(productos) {
         contenedor.innerHTML = "";
-        if (!productos.length) {
-            contenedor.innerHTML = "<p>No hay productos.</p>";
-            return;
-        }
+        // ... (todo tu código de 'forEach' y creación de 'tarjeta' es igual) ...
 
         productos.forEach((prod) => {
             const tarjeta = document.createElement("article");
+            // ... (tu innerHTML es igual) ...
             tarjeta.className = "tarjeta-producto";
             const imgUrl = prod.img;
 
             tarjeta.innerHTML = `
                 <img class="imagen-producto" src="${escapeHtml(imgUrl)}" alt="${escapeHtml(prod.nombre)}">
-
                 <div class="info-producto">
                     <div class="nombre-producto">${escapeHtml(prod.nombre)}</div>
                     <div class="precio-producto">$${formatearPrecio(prod.precio)}</div>
                     <div class="categoria-producto">${escapeHtml(prod.categoria) || "N/A"}</div>
                     <div class="stock">Stock: ${prod.stock ?? "N/A"}</div>
                 </div>
-
                 <div class="controls" data-id="${prod.id}"></div>
             `;
-
             contenedor.appendChild(tarjeta);
 
+            // --- ESTA PARTE ES LA ÚNICA QUE CAMBIA ---
             const controles = tarjeta.querySelector(".controls");
-            const cantidadActual = cantidadEnCarrito(prod.id);
+            const cantidadActual = cantidadEnCarrito(prod.id); // ¡Lee de carritoGlobal!
 
             if (cantidadActual === 0) {
                 const btn = document.createElement("button");
                 btn.className = "btn-agregar";
                 btn.textContent = "Agregar";
+                // ¡MODIFICADO! Llama a la nueva función
                 btn.addEventListener("click", () => agregarAlCarrito(prod));
                 controles.appendChild(btn);
             } else {
+                // Crear los controles para cantidad > 0
                 const cont = document.createElement("div");
                 cont.className = "contador";
 
@@ -153,6 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnMas.className = "btn-mas";
                 btnMas.innerText = "+";
                 btnMas.addEventListener("click", () => agregarAlCarrito(prod));
+                // (Opcional: deshabilita si stock >= cantidad)
+                if (Number.isFinite(prod.stock) && cantidadActual >= Number(prod.stock)) {
+                    btnMas.disabled = true;
+                }
 
                 cont.appendChild(btnBasura);
                 cont.appendChild(btnMenos);
@@ -163,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // util: escapar html
+    // Utils
     function escapeHtml(text) {
         if (!text) return "";
         return String(text)
@@ -174,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .replaceAll("'", "&#39;");
     }
 
-    // util: formatear precio
+    // 
     function formatearPrecio(n) {
         return Number(n).toLocaleString("es-MX", {
             minimumFractionDigits: 0,
@@ -182,10 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // click en carrito -> ir a cart.html
-    btnCarrito.addEventListener("click", () => {
-        window.location.href = "cart.html";
-    });
-
-    cargarProductos();
+    // Iniciar
+    cargarDatos();
 });
