@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Generar reporte de ventas</h3>
+<form method="post" action="{{ url_for('reports_view') }}">
+  <div class="row g-3">
+    <div class="col-md-3">
+      <label>Desde</label>
+      <input type="date" class="form-control" name="date_from">
+    </div>
+    <div class="col-md-3">
+      <label>Hasta</label>
+      <input type="date" class="form-control" name="date_to">
+    </div>
+    <div class="col-md-3">
+      <label>Producto</label>
+      <select name="product_id" class="form-select">
+        <option value="">(Todos)</option>
+        {% for p in productos %}
+          <option value="{{ p.id }}">{{ p.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label>Categoría</label>
+      <select name="categoria" class="form-select">
+        <option value="">(Todas)</option>
+        {% for c in categorias %}
+          <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-3">
+      <label>Agrupar por</label>
+      <select name="group_by" class="form-select">
+        <option value="product">Producto</option>
+        <option value="category">Categoría</option>
+        <option value="date">Fecha</option>
+      </select>
+    </div>
+  </div>
+  <div class="mt-4">
+    <button class="btn btn-success">Ver reporte</button>
+  </div>
+</form>
+{% endblock %}

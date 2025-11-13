@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Reporte de ventas</h3>
+<p>Generado: {{ generated_on.strftime("%Y-%m-%d %H:%M UTC") }}</p>
+
+<form action="{{ url_for('reports_download') }}" method="post" class="mb-3">
+  <!-- reenviamos filtros ocultos para descargar exactamente lo mismo -->
+  <input type="hidden" name="date_from" value="{{ filters.date_from }}">
+  <input type="hidden" name="date_to" value="{{ filters.date_to }}">
+  <input type="hidden" name="product_id" value="{{ filters.product_id }}">
+  <input type="hidden" name="categoria" value="{{ filters.categoria }}">
+  <input type="hidden" name="group_by" value="{{ filters.group_by }}">
+  <button class="btn btn-outline-primary btn-sm">Descargar PDF</button>
+  <a href="{{ url_for('reports_form') }}" class="btn btn-secondary btn-sm">Volver</a>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Grupo</th>
+      <th>Cantidad</th>
+      <th>Ventas (MXN)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in report %}
+      <tr>
+        <td>{{ r.grupo }}</td>
+        <td>{{ r.cantidad }}</td>
+        <td>{{ "{:,.2f}".format(r.ventas) }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="table-secondary">
+      <th>Totales</th>
+      <th>{{ total_items }}</th>
+      <th>{{ "{:,.2f}".format(total_amount) }}</th>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}
