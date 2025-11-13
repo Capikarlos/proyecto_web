@@ -1,0 +1,126 @@
+/* CSS NUEVO: Estilos para la tarjeta de perfil en index.html */
+
+.tarjeta-perfil {
+    background-color: #f9fafb; /* Un fondo gris muy claro */
+    border: 1px solid #e5e7eb; /* Borde sutil */
+    border-radius: 12px; /* Bordes más redondeados */
+    padding: 2rem;
+    max-width: 600px;
+    margin: 2rem auto; /* Centrar la tarjeta */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.tarjeta-perfil h2 {
+    text-align: center;
+    color: #1f2937; /* Azul oscuro/gris */
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+}
+
+.perfil-contenido {
+    display: flex;
+    flex-direction: column; /* Apilado en móvil */
+    gap: 1.5rem;
+}
+
+.perfil-info {
+    flex: 1; /* Ocupa el espacio disponible */
+}
+
+.perfil-info h3 {
+    color: #111827;
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.perfil-info p {
+    color: #4b5563; /* Gris medio */
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.perfil-info p strong {
+    color: #374151; /* Gris un poco más oscuro */
+    margin-right: 0.5rem;
+}
+
+#perfil-bio {
+    /* Estilo un poco diferente para la biografía */
+    background-color: #ffffff;
+    border-left: 4px solid #3182CE; /* Borde azul distintivo */
+    padding: 1rem;
+    border-radius: 4px;
+    font-style: italic;
+    color: #333;
+}
+
+/* Media query para pantallas más grandes (ej. tablets y desktops) */
+@media (min-width: 640px) {
+    .perfil-contenido {
+        flex-direction: row; /* Lado a lado en pantallas grandes */
+        align-items: flex-start;
+    }
+
+    .perfil-info h3 {
+        margin-top: 0;
+    }
+}
+
+/* MEDIA QUERY: 768px */
+@media (max-width: 768px) {
+    body {
+        background-color: #e0f2fe; /* azul muy claro */
+    }
+
+    .tarjeta-perfil {
+        max-width: 90%;
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+    }
+
+    .tarjeta-perfil h2 {
+        font-size: 1.5rem;
+    }
+
+    .perfil-info h3 {
+        font-size: 1.25rem;
+    }
+
+    .perfil-info p {
+        font-size: 0.95rem;
+    }
+}
+
+/* MEDIA QUERY: 480px */
+@media (max-width: 480px) {
+    body {
+        background-color: #fee2e2; /* rojo muy claro */
+    }
+
+    .tarjeta-perfil {
+        max-width: 95%;
+        padding: 1rem;
+        margin: 1rem auto;
+        box-shadow: none;
+    }
+
+    .tarjeta-perfil h2 {
+        font-size: 1.3rem;
+    }
+
+    .perfil-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .perfil-info p {
+        font-size: 0.9rem;
+    }
+
+    #perfil-bio {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+}

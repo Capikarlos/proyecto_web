@@ -1,0 +1,92 @@
+/* Login */
+.contenedor-login {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-login h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.contenedor-login label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.contenedor-login input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.contenedor-login button {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* MEDIA QUERY: 768px */
+@media (max-width: 768px) {
+    body {
+        background-color: #e0f2fe; /* azul claro */
+    }
+
+    .contenedor-login {
+        max-width: 90%;
+        margin: 60px auto;
+        padding: 25px;
+    }
+
+    .contenedor-login h2 {
+        font-size: 1.4rem;
+    }
+
+    .contenedor-login input {
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    .contenedor-login button {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
+
+/* MEDIA QUERY: 480px */
+@media (max-width: 480px) {
+    body {
+        background-color: #fee2e2; /* rojo claro */
+    }
+
+    .contenedor-login {
+        max-width: 95%;
+        margin: 40px auto;
+        padding: 20px;
+        box-shadow: none;
+    }
+
+    .contenedor-login h2 {
+        font-size: 1.2rem;
+    }
+
+    .contenedor-login input {
+        padding: 8px;
+        font-size: 0.95rem;
+    }
+
+    .contenedor-login button {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+}
