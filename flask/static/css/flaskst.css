@@ -1,0 +1,262 @@
+/* ---
+ GLOBAL: Variables y Reseteo
+--- */
+:root {
+  --color-primario: #005A9C;
+  /* Un azul corporativo más serio */
+  --color-secundario: #6c757d;
+  --color-fondo: #f4f7f6;
+  --color-texto: #333;
+  --color-borde: #dee2e6;
+  --color-blanco: #ffffff;
+  --color-rojo: #dc3545;
+  --color-verde: #28a745;
+  --ancho-max: 1100px;
+  /* Ancho máximo del contenido */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+h1,
+h3 {
+  margin-bottom: 20px;
+  color: var(--color-primario);
+}
+
+a {
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---
+ LAYOUT: Header, Navegación y Contenido Principal
+--- */
+header {
+  background-color: var(--color-blanco);
+  padding: 15px 30px;
+  border-bottom: 3px solid var(--color-primario);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  /* Permite que se apile en móviles */
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+}
+
+header nav a {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Anula el "float:right" y usa flexbox */
+header nav div {
+  float: none !important;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* Espacio entre "Bienvenido" y "Cerrar Sesión" */
+}
+
+header nav div a {
+  font-size: 1em;
+  /* Links de login/logout más pequeños */
+}
+
+main {
+  max-width: var(--ancho-max);
+  margin: 30px auto;
+  padding: 30px;
+  background-color: var(--color-blanco);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ---
+ COMPONENTES: Formularios
+--- */
+form div {
+  margin-bottom: 20px;
+}
+
+form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="date"],
+form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+/* Botón principal (de formularios grandes) */
+form button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  font-size: 1.1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+form button[type="submit"]:hover {
+  background-color: #004a80;
+}
+
+/* Estilos para el formulario de "Descargar PDF / Volver" */
+form[action*="download"] {
+  display: flex;
+  gap: 10px;
+  /* Espacio entre botones */
+  align-items: center;
+  margin: 20px 0;
+}
+
+form[action*="download"] button[type="submit"] {
+  width: auto;
+  /* El botón de descarga no ocupa todo el ancho */
+  font-size: 1em;
+  padding: 10px 15px;
+}
+
+form[action*="download"] a {
+  display: inline-block;
+  padding: 10px 15px;
+  border: 1px solid var(--color-secundario);
+  color: var(--color-secundario);
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+form[action*="download"] a:hover {
+  background-color: var(--color-fondo);
+  text-decoration: none;
+}
+
+
+/* ---
+ COMPONENTES: Tablas
+--- */
+/* ¡RECUERDA AÑADIR <div class="table-wrapper"> alrededor de tus tablas! */
+.table-wrapper {
+  overflow-x: auto;
+  /* ¡Magia para responsividad de tablas! */
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid var(--color-borde);
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: var(--color-fondo);
+  font-weight: bold;
+}
+
+/* Franjas de cebra para mejor lectura */
+table tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+table tfoot {
+  font-weight: bold;
+  background-color: var(--color-fondo);
+  border-top: 2px solid var(--color-primario);
+}
+
+table tfoot td {
+  text-align: right;
+}
+
+/* Alinear primera celda del footer a la izquierda */
+table tfoot tr th:first-child,
+table tfoot tr td:first-child {
+  text-align: left;
+}
+
+/* ---
+ UTILIDADES: Mensajes Flash
+--- */
+.flash {
+  padding: 15px;
+  margin: -30px -30px 30px -30px;
+  /* Se ajusta al borde de 'main' */
+  border-radius: 8px 8px 0 0;
+  /* Solo redondea arriba */
+  color: var(--color-blanco);
+  font-weight: bold;
+}
+
+.flash.danger {
+  /* Clase de Flask */
+  background-color: var(--color-rojo);
+}
+
+.flash.success {
+  background-color: var(--color-verde);
+}
+
+/* ---
+ RESPONSIVO: Vista en Celulares
+--- */
+@media (max-width: 768px) {
+  main {
+    margin: 15px;
+    padding: 20px;
+  }
+
+  .flash {
+    margin: -20px -20px 20px -20px;
+  }
+
+  header nav {
+    flex-direction: column;
+    /* Apila el logo y los links */
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  header nav div {
+    width: 100%;
+    gap: 10px;
+  }
+}
