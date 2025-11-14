@@ -172,7 +172,7 @@ body {
 }
 
 /* Clase para ocultar la ventana */
-#ventana-oferta.ventana-oculta {
+.ventana-oculta {
     visibility: hidden;
     opacity: 0;
 }

@@ -127,7 +127,6 @@ app.post('/api/login', async (req, res) => {
         }
 
         const usuarioDB = r.rows[0];
-
         // Comparación simple (reemplaza luego por hash si quieres seguridad real)
         if (password !== usuarioDB.password) {
             return res.status(401).json({ error: 'Contraseña incorrecta.' });
@@ -349,13 +348,15 @@ app.post('/api/contacto', async (req, res) => {
 // --- INICIA EL NUEVO BLOQUE "MIS COMPRAS" ---
 // GET /api/compras/historial
 // Devuelve todas las compras del usuario, uniendo con la tabla de productos
+// GET /api/compras/historial
+// Devuelve todas las compras del usuario, uniendo con la tabla de productos
 app.get('/api/compras/historial', proteger, async (req, res) => {
     const usuarioId = req.session.usuario.id;
     try {
         // Consulta que une 'compras' con 'productos' para obtener el nombre y la imagen
         const q = `
             SELECT 
-                c.id, 
+                c.id AS compra_id, -- <<< ¡AQUÍ ESTÁ LA CORRECCIÓN!
                 c.cantidad, 
                 c.total, 
                 c.estado, 

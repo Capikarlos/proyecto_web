@@ -73,20 +73,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnRecibido.className = 'btn-recibido';
                 btnRecibido.textContent = 'Confirmar Recibido';
                 btnRecibido.onclick = () => {
-                    actualizarEstado(item.id, 'recibido', btnRecibido);
+                    // --- CORREGIDO a item.compra_id ---
+                    actualizarEstado(item.compra_id, 'recibido', btnRecibido);
                 };
                 accionesEl.appendChild(btnRecibido);
-            
             } else if (item.estado === 'recibido') {
                 // Si ya lo recibió, puede solicitar una devolución
                 const btnDevolucion = document.createElement('button');
                 btnDevolucion.className = 'btn-devolucion';
                 btnDevolucion.textContent = 'Solicitar Devolución';
                 btnDevolucion.onclick = () => {
-                    actualizarEstado(item.id, 'devolucion_solicitada', btnDevolucion);
+                    // --- CORREGIDO a item.compra_id ---
+                    actualizarEstado(item.compra_id, 'devolucion_solicitada', btnDevolucion);
                 };
                 accionesEl.appendChild(btnDevolucion);
-            
             } else if (item.estado === 'devolucion_solicitada') {
                 // Si ya pidió devolución, mostramos un texto
                 accionesEl.innerHTML = '<p>Devolución en proceso...</p>';
@@ -125,7 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(`Error: ${err.message}`);
             // Si falla, volvemos a habilitar el botón
             boton.disabled = false;
-            boton.textContent = (nuevoEstado === 'recibido') ? 'Confirmar Recibido' : 'Solicitar Devolución';
+            if (nuevoEstado === 'recibido') {
+                boton.textContent = 'Confirmar Recibido';
+            } else if (nuevoEstado === 'devolucion_solicitada') {
+                boton.textContent = 'Solicitar Devolución';
+            }
         }
     }
 
