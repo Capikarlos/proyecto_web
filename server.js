@@ -417,4 +417,4 @@ app.post('/api/compras/actualizar-estado', proteger, async (req, res) => {
 // --- TERMINA EL NUEVO BLOQUE "MIS COMPRAS" ---
 
 // iniciar
-app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Servidor en http://${process.env.IP}:${PORT}`));
