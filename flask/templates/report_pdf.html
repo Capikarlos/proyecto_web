@@ -1,10 +1,9 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Reporte de ventas</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskst.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskst.css', _external=True) }}">
 </head>
 
 <body>
@@ -34,7 +33,7 @@
     </thead>
 
     <tbody>
-      {% for r in resultados %}
+      {% for r in report %}
       <tr>
         <td>{{ r.grupo }}</td>
         <td>{{ r.cantidad }}</td>
@@ -53,5 +52,4 @@
   </table>
 
 </body>
-
 </html>

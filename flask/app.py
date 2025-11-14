@@ -197,27 +197,25 @@ def reports_view():
 @login_required
 @admin_required
 def reports_download():
-    # Extraemos los mismos filtros del formulario
     date_from = parse_date(request.form.get('date_from'))
     date_to = parse_date(request.form.get('date_to'))
-    
-    # FIX: Asegura que product_id es None si no se seleccionó nada o es la cadena 'None'
+
     product_id_raw = request.form.get('product_id')
     product_id = product_id_raw if product_id_raw and product_id_raw != 'None' else None
-    
+
     categoria = request.form.get('categoria') or None
     group_by = request.form.get('group_by') or 'product'
 
-    # Lógica de consulta (duplicada de reports_view, puede ser factorizada)
     q = db.session.query(Compra, Producto).join(Producto, Compra.producto_id == Producto.id)
+
     if date_from:
         q = q.filter(Compra.fecha >= date_from)
     if date_to:
         q = q.filter(Compra.fecha <= date_to.replace(hour=23, minute=59, second=59))
-    
+
     if product_id:
         q = q.filter(Compra.producto_id == int(product_id))
-    
+
     if categoria:
         q = q.filter(Producto.categoria == categoria)
 
@@ -261,9 +259,8 @@ def reports_download():
         reverse=True
     )
 
-    # Renderizar template HTML del PDF
     html = render_template('report_pdf.html',
-                            report=report_list,
+                            resultados=report_list,   # ← AQUÍ ESTÁ EL FIX
                             total_amount=float(total_amount),
                             total_items=total_items,
                             filters={
@@ -277,25 +274,13 @@ def reports_download():
                             user=current_user)
 
     if WEASY:
-        # Generar PDF y enviarlo
         pdf = HTML(string=html).write_pdf()
-        return send_file(BytesIO(pdf), mimetype='application/pdf', as_attachment=True, download_name='reporte_ventas.pdf')
+        return send_file(BytesIO(pdf), mimetype='application/pdf',
+                         as_attachment=True, download_name='reporte_ventas.pdf')
     else:
-        # Fallback si WeasyPrint no está instalado
-        flash("WeasyPrint no está instalado en el servidor. Se descargará el HTML ( imprime como PDF desde tu navegador ).", "warning")
-        return render_template('report_pdf.html',
-                                report=report_list,
-                                total_amount=float(total_amount),
-                                total_items=total_items,
-                                filters={
-                                    'date_from': request.form.get('date_from'),
-                                    'date_to': request.form.get('date_to'),
-                                    'product_id': product_id,
-                                    'categoria': categoria,
-                                    'group_by': group_by
-                                },
-                                generated_on=datetime.utcnow(),
-                                user=current_user)
+        flash("WeasyPrint no está instalado", "warning")
+        return html
+
 
 # Comando CLI para crear un administrador fácilmente
 @app.cli.command('create-admin')
