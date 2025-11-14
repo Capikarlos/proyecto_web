@@ -68,7 +68,7 @@ app.use((req, res, next) => {
         }
     }
 
-    // permitir assets (js, css, images, fonts...)
+    // permitir assets
     const extPermitidas = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.woff', '.woff2', '.ico', '.map'];
     const ext = path.extname(url);
     if (extPermitidas.includes(ext)) return next();
@@ -93,9 +93,9 @@ app.post('/api/register', async (req, res) => {
         const usuario = r.rows[0];
 
         // MODIFICADO: Guardamos los nuevos datos en la sesión
-        req.session.usuario = { 
-            id: usuario.id, 
-            nombre_usuario: usuario.nombre_usuario, 
+        req.session.usuario = {
+            id: usuario.id,
+            nombre_usuario: usuario.nombre_usuario,
             email: usuario.email,
             nombre_completo: usuario.nombre_completo
         };
@@ -150,20 +150,25 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// POST
+// Logger para rutas /api (útil para depuración)
+app.use('/api', (req, res, next) => {
+    const usuario = req.session && req.session.usuario ? req.session.usuario.nombre_usuario : 'anon';
+    console.log(`[API] ${new Date().toISOString()} ${req.method} ${req.originalUrl} user=${usuario}`);
+    next();
+});
 app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).json({ error: 'No se pudo cerrar sesión' });
         res.json({ ok: true });
     });
 });
-// GET
+// Esto sirve para documentar que las rutas siguientes gestionan operaciones relacionadas con la sesión:
 app.get('/api/session', (req, res) => {
     if (req.session && req.session.usuario) return res.json({ user: req.session.usuario });
     return res.status(401).json({ error: 'No hay sesión activa' });
 });
 
-// --- PEGA EL CÓDIGO QUE FALTA AQUÍ ---
+
 // Middleware para proteger rutas (esta es la función que faltaba)
 function proteger(req, res, next) {
     if (req.session && req.session.usuario) {
@@ -173,8 +178,8 @@ function proteger(req, res, next) {
         res.status(401).json({ error: 'No autorizado, debes iniciar sesión' });
     }
 }
-// En server.js, después de tus otras rutas
-// GET /api/carrito - (Ya la teníamos) Devuelve el carrito del usuario
+
+// Devuelve el carrito del usuario
 app.get('/api/carrito', proteger, (req, res) => {
     if (!req.session.carrito) {
         req.session.carrito = [];
@@ -182,12 +187,7 @@ app.get('/api/carrito', proteger, (req, res) => {
     res.json(req.session.carrito);
 });
 
-/**
- * POST /api/carrito/set - Actualiza la cantidad de UN producto.
- * Esto reemplaza "agregar", "reducir" y "eliminar" en una sola ruta.
- * Body: { "producto_id": 123, "cantidad": 3 }
- * Si cantidad es 0, se elimina del carrito.
- */
+// Actualiza la cantidad de UN producto.
 app.post('/api/carrito/set', proteger, async (req, res) => {
     const { producto_id, cantidad } = req.body;
     const cant = Number(cantidad);
@@ -200,12 +200,12 @@ app.post('/api/carrito/set', proteger, async (req, res) => {
         req.session.carrito = [];
     }
 
-    // (Opcional pero RECOMENDADO) Verificar stock antes de añadir
-    // const r = await pool.query('SELECT stock FROM productos WHERE id = $1', [producto_id]);
-    // const stock = r.rows[0]?.stock;
-    // if (Number.isFinite(stock) && cant > stock) {
-    //    return res.status(409).json({ error: 'No hay suficiente stock' });
-    // }
+    // Verificar stock antes de añadir
+    const r = await pool.query('SELECT stock FROM productos WHERE id = $1', [producto_id]);
+    const stock = r.rows[0]?.stock;
+    if (Number.isFinite(stock) && cant > stock) {
+        return res.status(409).json({ error: 'No hay suficiente stock' });
+    }
 
     const idx = req.session.carrito.findIndex(p => p.id === producto_id);
 
@@ -225,7 +225,7 @@ app.post('/api/carrito/set', proteger, async (req, res) => {
             if (r.rowCount === 0) {
                 return res.status(404).json({ error: 'Producto no encontrado' });
             }
-            
+
             const prod = r.rows[0];
             req.session.carrito.push({
                 id: prod.id,
@@ -238,17 +238,12 @@ app.post('/api/carrito/set', proteger, async (req, res) => {
             });
         }
     }
-    
+
     // Devolvemos el carrito actualizado para que el frontend no tenga que pensar
     res.json(req.session.carrito);
 });
 
-
-/**
- * POST /api/compras/finalizar - El paso final.
- * Lee el carrito de la sesión, lo guarda en la tabla 'compras'
- * y limpia el carrito de la sesión.
- */
+// Lee el carrito de la sesión, lo guarda en la tabla 'compras' y limpia el carrito de la sesión.
 app.post('/api/compras/finalizar', proteger, async (req, res) => {
     const carrito = req.session.carrito;
     const usuarioId = req.session.usuario.id;
@@ -271,10 +266,10 @@ app.post('/api/compras/finalizar', proteger, async (req, res) => {
             `;
             await client.query(q, [usuarioId, item.id, item.cantidad, totalItem]);
 
-            // (Opcional) Aquí también deberías descontar el stock de la tabla 'productos'
+            // Aquí también deberías descontar el stock de la tabla 'productos'
             // await client.query('UPDATE productos SET stock = stock - $1 WHERE id = $2', [item.cantidad, item.id]);
         }
-        
+
         await client.query('COMMIT'); // Confirmar transacción
 
         // Limpiar carrito de la sesión
@@ -291,7 +286,7 @@ app.post('/api/compras/finalizar', proteger, async (req, res) => {
     }
 });
 
-// get
+// Me da todos los productos
 app.get('/api/productos', async (req, res) => {
     try {
         const resultado = await pool.query('SELECT * FROM productos ORDER BY id');
@@ -302,7 +297,6 @@ app.get('/api/productos', async (req, res) => {
     }
 });
 
-// GET /api/contacto/historial
 // Devuelve los comentarios ANTERIORES del usuario logueado
 app.get('/api/contacto/historial', proteger, async (req, res) => {
     const usuarioId = req.session.usuario.id;
@@ -316,11 +310,10 @@ app.get('/api/contacto/historial', proteger, async (req, res) => {
     }
 });
 
-// POST /api/contacto
 // Guarda un nuevo mensaje de contacto en la BD
 app.post('/api/contacto', async (req, res) => {
     const { correo, comentario } = req.body;
-    
+
     // Validación del lado del servidor (¡importante!)
     if (!correo || !comentario || comentario.length < 5) {
         return res.status(400).json({ error: 'Todos los campos son requeridos' });
@@ -345,10 +338,6 @@ app.post('/api/contacto', async (req, res) => {
     }
 });
 
-// --- INICIA EL NUEVO BLOQUE "MIS COMPRAS" ---
-// GET /api/compras/historial
-// Devuelve todas las compras del usuario, uniendo con la tabla de productos
-// GET /api/compras/historial
 // Devuelve todas las compras del usuario, uniendo con la tabla de productos
 app.get('/api/compras/historial', proteger, async (req, res) => {
     const usuarioId = req.session.usuario.id;
@@ -376,17 +365,15 @@ app.get('/api/compras/historial', proteger, async (req, res) => {
     }
 });
 
-// POST /api/compras/actualizar-estado
-// Permite al usuario cambiar el estado de una compra (ej. a 'recibido')
+// Permite al usuario cambiar el estado de una compra
 app.post('/api/compras/actualizar-estado', proteger, async (req, res) => {
     const usuarioId = req.session.usuario.id;
     const { compra_id, nuevo_estado } = req.body;
-
     // Validación de seguridad
     if (!compra_id || !nuevo_estado) {
         return res.status(400).json({ error: 'Faltan datos' });
     }
-    
+
     // Lista de estados permitidos
     const estadosPermitidos = ['recibido', 'devolucion_solicitada'];
     if (!estadosPermitidos.includes(nuevo_estado)) {
@@ -413,8 +400,6 @@ app.post('/api/compras/actualizar-estado', proteger, async (req, res) => {
         res.status(500).json({ error: 'Error interno' });
     }
 });
-
-// --- TERMINA EL NUEVO BLOQUE "MIS COMPRAS" ---
 
 // iniciar
 app.listen(PORT, () => console.log(`Servidor en http://${process.env.IP}:${PORT}`));

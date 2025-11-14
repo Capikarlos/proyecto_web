@@ -7,7 +7,6 @@
     <title>Página Principal</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/perfil.css">
-    <link rel="stylesheet" href="/css/popup.css"> <!-- CSS NUEVO PARA EL POP-UP -->
 </head>
 
 <body>
@@ -19,14 +18,10 @@
         <h1>Bienvenido a tu Página Principal</h1>
         <p>Esta es la página de inicio. Solo deberías ver esto si has iniciado sesión.</p>
 
-        <!-- 
-          NUEVA SECCIÓN DE PERFIL
-          (Eliminada la etiqueta <img> para el avatar)
-        -->
         <section class="tarjeta-perfil">
             <h2>Tu Perfil</h2>
             <div class="perfil-contenido">
-                <!-- <img id="perfil-avatar" ... >  <- ELIMINADO -->
+                <!-- <img id="perfil-avatar" ... >-->
                 <div class="perfil-info">
                     <h3 id="perfil-nombre">Cargando nombre...</h3>
                     <p><strong>Usuario:</strong> <span id="perfil-username">...</span></p>
@@ -38,7 +33,7 @@
 
     </main>
 
-    <!-- HTML NUEVO: Ventana emergente de Cookies -->
+    <!-- cookies -->
     <div id="ventana-oferta" class="ventana-oculta">
         <div class="contenido-ventana">
             <h3>Política de Cookies</h3>
@@ -51,7 +46,7 @@
     <!-- Cargamos el menú (que maneja la sesión) y el nuevo script de perfil -->
     <script src="/js/menu.js"></script>
     <script src="/js/perfil.js"></script>
-    <script src="/js/main.js"></script> <!-- SCRIPT NUEVO (con .js) -->
+    <script src="/js/main.js"></script> 
 </body>
 
 </html>

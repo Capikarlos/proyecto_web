@@ -5,15 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Carrito</title>
-    <!-- NOTA: He añadido popup.css para los estilos del modal que ya tenías -->
     <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/popup.css" />
     <link rel="stylesheet" href="/css/productos.css" /> 
 </head>
 
 <body>
 
-    <!-- Contenedor del Menú (se carga por JS) -->
+    <!-- Contenedor del Menú -->
     <div id="menu-contenedor"></div>
 
     <!-- Pop up de Términos y Condiciones -->
@@ -32,18 +30,14 @@
         </div>
     </div>
 
-    <!-- 
-      ESTRUCTURA CORREGIDA:
-      He combinado tu <section> y <div> para que solo haya UN 'lista-carrito'.
-    -->
     <main class="contenedor-carrito">
         <div id="carrito-container">
-            <!-- 1. Lista de productos -->
+            <!-- Lista de productos -->
             <section id="lista-carrito">
                 <!-- Items se inyectan por JS -->
             </section>
 
-            <!-- 2. Resumen de la compra -->
+            <!-- Resumen de la compra -->
             <div id="resumen-carrito">
                 <h3>Resumen</h3>
                 <div id="total-final">Total: $0.00</div>
@@ -52,9 +46,8 @@
         </div>
     </main>
 
-    <!-- SCRIPTS CORREGIDOS -->
     <script src="/js/menu.js"></script>
-    <script src="/js/carrito.js"></script> <!-- Ruta corregida -->
+    <script src="/js/carrito.js"></script>
 </body>
 
 </html>

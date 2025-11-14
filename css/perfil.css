@@ -1,18 +1,17 @@
-/* CSS NUEVO: Estilos para la tarjeta de perfil en index.html */
-
+/* perfil.css */
 .tarjeta-perfil {
-    background-color: #f9fafb; /* Un fondo gris muy claro */
-    border: 1px solid #e5e7eb; /* Borde sutil */
-    border-radius: 12px; /* Bordes más redondeados */
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
     padding: 2rem;
     max-width: 600px;
-    margin: 2rem auto; /* Centrar la tarjeta */
+    margin: 2rem auto;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .tarjeta-perfil h2 {
     text-align: center;
-    color: #1f2937; /* Azul oscuro/gris */
+    color: #1f2937;
     margin-top: 0;
     margin-bottom: 1.5rem;
     font-size: 1.75rem;
@@ -20,12 +19,12 @@
 
 .perfil-contenido {
     display: flex;
-    flex-direction: column; /* Apilado en móvil */
+    flex-direction: column;
     gap: 1.5rem;
 }
 
 .perfil-info {
-    flex: 1; /* Ocupa el espacio disponible */
+    flex: 1;
 }
 
 .perfil-info h3 {
@@ -36,31 +35,30 @@
 }
 
 .perfil-info p {
-    color: #4b5563; /* Gris medio */
+    color: #4b5563;
     line-height: 1.6;
     margin-bottom: 0.75rem;
     font-size: 1rem;
 }
 
 .perfil-info p strong {
-    color: #374151; /* Gris un poco más oscuro */
+    color: #374151;
     margin-right: 0.5rem;
 }
 
 #perfil-bio {
-    /* Estilo un poco diferente para la biografía */
     background-color: #ffffff;
-    border-left: 4px solid #3182CE; /* Borde azul distintivo */
+    border-left: 4px solid #3182CE;
     padding: 1rem;
     border-radius: 4px;
     font-style: italic;
     color: #333;
 }
 
-/* Media query para pantallas más grandes (ej. tablets y desktops) */
+/* Media query para pantallas grandes */
 @media (min-width: 640px) {
     .perfil-contenido {
-        flex-direction: row; /* Lado a lado en pantallas grandes */
+        flex-direction: row;
         align-items: flex-start;
     }
 
@@ -69,10 +67,10 @@
     }
 }
 
-/* MEDIA QUERY: 768px */
+/* Media Query: 768px */
 @media (max-width: 768px) {
     body {
-        background-color: #e0f2fe; /* azul muy claro */
+        background-color: #e0f2fe;
     }
 
     .tarjeta-perfil {
@@ -94,10 +92,10 @@
     }
 }
 
-/* MEDIA QUERY: 480px */
+/* Media Query: 480px */
 @media (max-width: 480px) {
     body {
-        background-color: #fee2e2; /* rojo muy claro */
+        background-color: #fee2e2;
     }
 
     .tarjeta-perfil {

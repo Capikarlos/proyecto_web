@@ -1,5 +1,4 @@
-/* PRODUCTOS (productos.html) */
-/* ---------------------- */
+/* productos.css */
 .grid-productos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -342,7 +341,7 @@
     }
 
     .tarjeta-producto {
-        min-height: auto;
+        min-height: 0;
         padding: 12px;
     }
 
