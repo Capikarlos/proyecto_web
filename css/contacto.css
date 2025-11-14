@@ -1,7 +1,80 @@
+body {
+    background-color: #f9fafb; /* gris muy claro */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.contenedor-contacto,
+.tarjeta-contacto,
+.tarjeta-historial {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-contacto h2,
+.tarjeta-historial h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.tarjeta-contacto p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+#formulario-contacto label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#formulario-contacto input[type="email"],
+#formulario-contacto textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.botones-contacto {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.botones-contacto button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botones-contacto button:hover {
+    background-color: #1d4ed8;
+}
+
+#mensaje-confirmacion {
+    text-align: center;
+    font-size: 1rem;
+    color: #15803d;
+    margin-top: 1rem;
+}
+
+
 /* MEDIA QUERY: 768px */
 @media (max-width: 768px) {
     body {
-        background-color: #e0f2fe; /* azul muy claro */
+        background-color: #dbeafe; /* azul claro */
     }
 
     .contenedor-contacto,
@@ -37,7 +110,7 @@
 /* MEDIA QUERY: 480px */
 @media (max-width: 480px) {
     body {
-        background-color: #fee2e2; /* rojo muy claro */
+        background-color: #fecaca; /* rojo claro */
     }
 
     .contenedor-contacto,

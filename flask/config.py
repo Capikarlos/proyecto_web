@@ -1,10 +1,10 @@
 import os
 from urllib.parse import quote_plus
 
-DB_USER = "miusuario"
-DB_PASS = quote_plus("capi123")
+DB_USER = "carlos_user"
+DB_PASS = quote_plus("12345")
 DB_HOST = "localhost"
-DB_NAME = "proyecto_web2"
+DB_NAME = "proyecto_web"
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "cambiaestoenproduccion")
