@@ -1,47 +1,62 @@
-{% extends "base.html" %}
-{% block content %}
+<!doctype html>
+<nav>
+<a href="{{ url_for('index') }}">Reportes</a>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flaskst.css') }}">
+</nav>
+</header>
+
+<main>
 <h3>Generar reporte de ventas</h3>
+
 <form method="post" action="{{ url_for('reports_view') }}">
-  <div class="row g-3">
-    <div class="col-md-3">
-      <label>Desde</label>
-      <input type="date" class="form-control" name="date_from">
+    <div>
+        <label>Desde<br>
+            <input type="date" name="date_from">
+        </label>
     </div>
-    <div class="col-md-3">
-      <label>Hasta</label>
-      <input type="date" class="form-control" name="date_to">
+
+    <div>
+        <label>Hasta<br>
+            <input type="date" name="date_to">
+        </label>
     </div>
-    <div class="col-md-3">
-      <label>Producto</label>
-      <select name="product_id" class="form-select">
-        <option value="">(Todos)</option>
-        {% for p in productos %}
-          <option value="{{ p.id }}">{{ p.nombre }}</option>
-        {% endfor %}
-      </select>
+
+    <div>
+        <label>Producto<br>
+            <select name="product_id">
+                <option value="">(Todos)</option>
+                {% for p in productos %}
+                    <option value="{{ p.id }}">{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+        </label>
     </div>
-    <div class="col-md-3">
-      <label>Categoría</label>
-      <select name="categoria" class="form-select">
-        <option value="">(Todas)</option>
-        {% for c in categorias %}
-          <option value="{{ c }}">{{ c }}</option>
-        {% endfor %}
-      </select>
+
+    <div>
+        <label>Categoría<br>
+            <select name="categoria">
+                <option value="">(Todas)</option>
+                {% for c in categorias %}
+                    <option value="{{ c }}">{{ c }}</option>
+                {% endfor %}
+            </select>
+        </label>
     </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col-md-3">
-      <label>Agrupar por</label>
-      <select name="group_by" class="form-select">
-        <option value="product">Producto</option>
-        <option value="category">Categoría</option>
-        <option value="date">Fecha</option>
-      </select>
+
+    <div>
+        <label>Agrupar por<br>
+            <select name="group_by">
+                <option value="product">Producto</option>
+                <option value="category">Categoría</option>
+                <option value="date">Fecha</option>
+            </select>
+        </label>
     </div>
-  </div>
-  <div class="mt-4">
-    <button class="btn btn-success">Ver reporte</button>
-  </div>
+
+    <div>
+        <button type="submit">Ver reporte</button>
+    </div>
 </form>
-{% endblock %}
+</main>
+</body>
+</html>
