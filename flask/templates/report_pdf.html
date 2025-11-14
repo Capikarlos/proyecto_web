@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Reporte de ventas</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskst.css', _external=True) }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskst.css') }}">
 </head>
 
 <body>
@@ -33,11 +33,11 @@
     </thead>
 
     <tbody>
-      {% for r in report %}
+      {% for r in resultados %}
       <tr>
-        <td>{{ r.grupo }}</td>
-        <td>{{ r.cantidad }}</td>
-        <td>{{ "{:,.2f}".format(r.ventas) }}</td>
+        <td>{{ r['grupo'] }}</td>
+        <td>{{ r['cantidad'] }}</td>
+        <td>{{ "{:,.2f}".format(r['ventas']) }}</td>
       </tr>
       {% endfor %}
     </tbody>

@@ -19,12 +19,12 @@
     <p>Generado: {{ generated_on.strftime("%Y-%m-%d %H:%M UTC") }}</p>
 
     <form action="{{ url_for('reports_download') }}" method="post">
-      <!-- reenviamos filtros ocultos para descargar exactamente lo mismo -->
-      <input type="hidden" name="date_from" value="{{ filters.date_from }}">
-      <input type="hidden" name="date_to" value="{{ filters.date_to }}">
-      <input type="hidden" name="product_id" value="{{ filters.product_id }}">
-      <input type="hidden" name="categoria" value="{{ filters.categoria }}">
-      <input type="hidden" name="group_by" value="{{ filters.group_by }}">
+      <input type="hidden" name="date_from" value="{{ filters.date_from or '' }}">
+      <input type="hidden" name="date_to"   value="{{ filters.date_to or '' }}">
+      <input type="hidden" name="product_id" value="{{ filters.product_id or '' }}">
+      <input type="hidden" name="categoria"  value="{{ filters.categoria or '' }}">
+      <input type="hidden" name="group_by"   value="{{ filters.group_by or 'product' }}">
+
 
       <button type="submit">Descargar PDF</button>
       <a href="{{ url_for('reports_form') }}">Volver</a>

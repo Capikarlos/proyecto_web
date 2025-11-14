@@ -197,15 +197,18 @@ def reports_view():
 @login_required
 @admin_required
 def reports_download():
+    # Parsear fechas
     date_from = parse_date(request.form.get('date_from'))
     date_to = parse_date(request.form.get('date_to'))
 
+    # Producto (proteger contra cadena 'None' o '')
     product_id_raw = request.form.get('product_id')
     product_id = product_id_raw if product_id_raw and product_id_raw != 'None' else None
 
     categoria = request.form.get('categoria') or None
     group_by = request.form.get('group_by') or 'product'
 
+    # Construir query
     q = db.session.query(Compra, Producto).join(Producto, Compra.producto_id == Producto.id)
 
     if date_from:
@@ -214,72 +217,99 @@ def reports_download():
         q = q.filter(Compra.fecha <= date_to.replace(hour=23, minute=59, second=59))
 
     if product_id:
-        q = q.filter(Compra.producto_id == int(product_id))
+        try:
+            q = q.filter(Compra.producto_id == int(product_id))
+        except ValueError:
+            # si product_id no es convertible, ignoramos el filtro
+            pass
 
     if categoria:
         q = q.filter(Producto.categoria == categoria)
 
     rows = q.all()
+    # DEBUG: registra número de filas (usa logging si lo prefieres)
+    print("DEBUG: filas recuperadas en download:", len(rows))
 
+    # Preparar reporte agregando con Decimal seguro
+    from decimal import Decimal, InvalidOperation
     report = {}
-    total_amount = decimal.Decimal('0.00')
+    total_amount = Decimal('0.00')
     total_items = 0
+
+    def to_decimal(x):
+        if x is None:
+            return Decimal('0.00')
+        if isinstance(x, Decimal):
+            return x
+        try:
+            return Decimal(str(x))
+        except (InvalidOperation, ValueError, TypeError):
+            return Decimal('0.00')
 
     if group_by == 'product':
         for compra, producto in rows:
             key = f"{producto.id} - {producto.nombre}"
             if key not in report:
-                report[key] = {'cantidad': 0, 'ventas': decimal.Decimal('0.00')}
-            report[key]['cantidad'] += compra.cantidad
-            report[key]['ventas'] += (compra.total or 0)
-            total_amount += (compra.total or 0)
-            total_items += compra.cantidad
+                report[key] = {'cantidad': 0, 'ventas': Decimal('0.00')}
+            report[key]['cantidad'] += (compra.cantidad or 0)
+            venta = to_decimal(compra.total)
+            report[key]['ventas'] += venta
+            total_amount += venta
+            total_items += (compra.cantidad or 0)
     elif group_by == 'category':
         for compra, producto in rows:
             key = producto.categoria or 'Sin categoría'
             if key not in report:
-                report[key] = {'cantidad': 0, 'ventas': decimal.Decimal('0.00')}
-            report[key]['cantidad'] += compra.cantidad
-            report[key]['ventas'] += (compra.total or 0)
-            total_amount += (compra.total or 0)
-            total_items += compra.cantidad
-    else:
+                report[key] = {'cantidad': 0, 'ventas': Decimal('0.00')}
+            report[key]['cantidad'] += (compra.cantidad or 0)
+            venta = to_decimal(compra.total)
+            report[key]['ventas'] += venta
+            total_amount += venta
+            total_items += (compra.cantidad or 0)
+    else:  # agrupar por fecha
         for compra, producto in rows:
             key = compra.fecha.strftime("%Y-%m-%d")
             if key not in report:
-                report[key] = {'cantidad': 0, 'ventas': decimal.Decimal('0.00')}
-            report[key]['cantidad'] += compra.cantidad
-            report[key]['ventas'] += (compra.total or 0)
-            total_amount += (compra.total or 0)
-            total_items += compra.cantidad
+                report[key] = {'cantidad': 0, 'ventas': Decimal('0.00')}
+            report[key]['cantidad'] += (compra.cantidad or 0)
+            venta = to_decimal(compra.total)
+            report[key]['ventas'] += venta
+            total_amount += venta
+            total_items += (compra.cantidad or 0)
 
+    # Convertir a lista ordenada y transformar ventas a float para el template
     report_list = sorted(
         [{'grupo': k, 'cantidad': v['cantidad'], 'ventas': float(v['ventas'])} for k, v in report.items()],
         key=lambda x: x['ventas'],
         reverse=True
     )
 
+    # Renderizar HTML del PDF (usa resultados en el template report_pdf.html)
     html = render_template('report_pdf.html',
-                            resultados=report_list,   # ← AQUÍ ESTÁ EL FIX
+                            resultados=report_list,
                             total_amount=float(total_amount),
                             total_items=total_items,
                             filters={
-                                'date_from': request.form.get('date_from'),
-                                'date_to': request.form.get('date_to'),
-                                'product_id': product_id,
-                                'categoria': categoria,
+                                'date_from': request.form.get('date_from') or '',
+                                'date_to': request.form.get('date_to') or '',
+                                'product_id': product_id or '',
+                                'categoria': categoria or '',
                                 'group_by': group_by
                             },
                             generated_on=datetime.utcnow(),
                             user=current_user)
 
     if WEASY:
-        pdf = HTML(string=html).write_pdf()
-        return send_file(BytesIO(pdf), mimetype='application/pdf',
-                         as_attachment=True, download_name='reporte_ventas.pdf')
+        # Pasar base_url para que Weasy resuelva rutas relativas (/static/...) correctamente
+        pdf = HTML(string=html, base_url=request.host_url).write_pdf()
+        return send_file(BytesIO(pdf),
+                         mimetype='application/pdf',
+                         as_attachment=True,
+                         download_name='reporte_ventas.pdf')
     else:
-        flash("WeasyPrint no está instalado", "warning")
+        flash("WeasyPrint no está instalado: se devuelve el HTML para depuración.", "warning")
         return html
+
 
 
 # Comando CLI para crear un administrador fácilmente
