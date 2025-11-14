@@ -88,7 +88,7 @@ app.post('/api/register', async (req, res) => {
     try {
         // El insert
         const q = 'INSERT INTO usuarios (nombre_usuario, password, email, rol, nombre_completo) VALUES ($1,$2,$3,$4,$5) RETURNING id, nombre_usuario, email, nombre_completo';
-        const valores = [nombre_usuario, password, email, 'user', nombre_completo || null]; // MODIFICADO
+        const valores = [nombre_usuario, password, email, 'user', nombre_completo || null];
         const r = await pool.query(q, valores);
         const usuario = r.rows[0];
 
@@ -120,7 +120,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     try {
-        const q = 'SELECT id, nombre_usuario, password, email, nombre_completo FROM usuarios WHERE nombre_usuario = $1';
+        const q = 'SELECT * FROM usuarios WHERE nombre_usuario = $1';
         const r = await pool.query(q, [nombre_usuario]);
         if (r.rowCount === 0) {
             return res.status(401).json({ error: 'Usuario no encontrado.' });
@@ -345,6 +345,75 @@ app.post('/api/contacto', async (req, res) => {
         res.status(500).json({ error: 'Error interno al guardar el mensaje' });
     }
 });
+
+// --- INICIA EL NUEVO BLOQUE "MIS COMPRAS" ---
+// GET /api/compras/historial
+// Devuelve todas las compras del usuario, uniendo con la tabla de productos
+app.get('/api/compras/historial', proteger, async (req, res) => {
+    const usuarioId = req.session.usuario.id;
+    try {
+        // Consulta que une 'compras' con 'productos' para obtener el nombre y la imagen
+        const q = `
+            SELECT 
+                c.id, 
+                c.cantidad, 
+                c.total, 
+                c.estado, 
+                c.fecha,
+                p.nombre, 
+                p.img
+            FROM compras c
+            JOIN productos p ON c.producto_id = p.id
+            WHERE c.usuario_id = $1
+            ORDER BY c.fecha DESC;
+        `;
+        const r = await pool.query(q, [usuarioId]);
+        res.json(r.rows);
+    } catch (err) {
+        console.error('Error en /api/compras/historial:', err.message);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// POST /api/compras/actualizar-estado
+// Permite al usuario cambiar el estado de una compra (ej. a 'recibido')
+app.post('/api/compras/actualizar-estado', proteger, async (req, res) => {
+    const usuarioId = req.session.usuario.id;
+    const { compra_id, nuevo_estado } = req.body;
+
+    // Validación de seguridad
+    if (!compra_id || !nuevo_estado) {
+        return res.status(400).json({ error: 'Faltan datos' });
+    }
+    
+    // Lista de estados permitidos
+    const estadosPermitidos = ['recibido', 'devolucion_solicitada'];
+    if (!estadosPermitidos.includes(nuevo_estado)) {
+        return res.status(400).json({ error: 'Estado no válido' });
+    }
+
+    try {
+        // Actualiza el estado SOLO SI la compra pertenece al usuario logueado
+        const q = `
+            UPDATE compras
+            SET estado = $1
+            WHERE id = $2 AND usuario_id = $3;
+        `;
+        const r = await pool.query(q, [nuevo_estado, compra_id, usuarioId]);
+
+        if (r.rowCount === 0) {
+            // Si rowCount es 0, significa que la compra no existe O no pertenece al usuario
+            return res.status(404).json({ error: 'Compra no encontrada o no autorizada' });
+        }
+
+        res.json({ ok: true, message: `Estado actualizado a ${nuevo_estado}` });
+    } catch (err) {
+        console.error('Error en /api/compras/actualizar-estado:', err.message);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// --- TERMINA EL NUEVO BLOQUE "MIS COMPRAS" ---
 
 // iniciar
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

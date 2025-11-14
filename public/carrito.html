@@ -5,46 +5,56 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Carrito</title>
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="stylesheet" href="./css/productos.css" />
+    <!-- NOTA: He añadido popup.css para los estilos del modal que ya tenías -->
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/popup.css" />
+    <link rel="stylesheet" href="/css/productos.css" /> <!-- Asumo que aquí están los estilos de carrito -->
 </head>
 
 <body>
 
-    <main class="contenedor-carrito">
-        <!-- Pop up --><!-- el id lo uso en js y la clase en css -->
-        <div id="modal-terminos" class="ventana-oculta">
-            <div class="contenido-ventana">
-                <h3>Términos y condiciones</h3>
-                <p>Antes de finalizar la compra debes aceptar nuestros términos y condiciones.</p>
-                <p><a href="https://www.amazon.com.mx/gp/help/customer/display.html?nodeId=GLSBYFE9MGKKQXXM"
-                        target="_blank" rel="noopener">Leer
-                        términos de uso</a></p>
-                <div>
-                    <button id="btn-aceptar-terminos" class="btn-agregar">Aceptar</button>
-                    <button id="btn-rechazar-terminos" class="btn-menos">Rechazar</button>
-                </div>
+    <!-- Contenedor del Menú (se carga por JS) -->
+    <div id="menu-contenedor"></div>
+
+    <!-- Pop up de Términos y Condiciones -->
+    <div id="modal-terminos" class="ventana-oculta">
+        <div class="contenido-ventana">
+            <h3>Términos y condiciones</h3>
+            <p>Antes de finalizar la compra debes aceptar nuestros términos y condiciones.</p>
+            <p><a href="https://www.amazon.com.mx/gp/help/customer/display.html?nodeId=GLSBYFE9MGKKQXXM"
+                    target="_blank" rel="noopener">Leer
+                    términos de uso</a></p>
+            <div>
+                <!-- IDs correctos que usa tu carrito.js -->
+                <button id="btn-aceptar-terminos" class="btn-agregar">Aceptar</button>
+                <button id="btn-rechazar-terminos" class="btn-menos">Rechazar</button>
             </div>
         </div>
+    </div>
 
-        <section id="lista-carrito">
-            <!-- Items se inyectan por JS -->
-        </section>
-
+    <!-- 
+      ESTRUCTURA CORREGIDA:
+      He combinado tu <section> y <div> para que solo haya UN 'lista-carrito'.
+    -->
+    <main class="contenedor-carrito">
         <div id="carrito-container">
-            <div id="lista-carrito"></div>
+            <!-- 1. Lista de productos -->
+            <section id="lista-carrito">
+                <!-- Items se inyectan por JS -->
+            </section>
+
+            <!-- 2. Resumen de la compra -->
             <div id="resumen-carrito">
                 <h3>Resumen</h3>
                 <div id="total-final">Total: $0.00</div>
                 <button id="btn-finalizar">Finalizar compra</button>
             </div>
         </div>
-
     </main>
 
+    <!-- SCRIPTS CORREGIDOS -->
     <script src="/js/menu.js"></script>
-    <script src="/js/sesion.js"></script>
-    <script src="./js/main.js"></script>
-    <script src="./js/carrito.js"></script>
+    <script src="/js/carrito.js"></script> <!-- Ruta corregida -->
 </body>
+
 </html>

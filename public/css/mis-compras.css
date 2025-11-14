@@ -1,0 +1,126 @@
+/* CSS Específico para mis-compras.html */
+
+/* Contenedor principal */
+#lista-compras {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espacio entre cada tarjeta de compra */
+    margin-top: 2rem;
+}
+
+/* Tarjeta individual de un item comprado */
+.compra-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-wrap: wrap; /* Para que en móvil se apile */
+    padding: 1.5rem;
+    gap: 1.5rem;
+    border-left: 5px solid #a0aec0; /* Borde de estado (default) */
+}
+
+/* Imagen del producto */
+.compra-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0; /* Evita que la imagen se encoja */
+}
+
+/* Información (nombre, fecha, etc) */
+.compra-info {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+    min-width: 200px; /* Para que no se encoja demasiado */
+}
+
+.compra-nombre {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.compra-info p {
+    color: #4b5563;
+    margin: 0.25rem 0;
+}
+
+/* Contenedor de acciones (botones) */
+.compra-acciones {
+    flex-basis: 200px; /* Ancho base de la columna de botones */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Botones */
+.compra-acciones button {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button.btn-recibido {
+    background-color: #3182CE; /* Azul */
+    color: white;
+}
+button.btn-recibido:hover {
+    background-color: #2B6CB0;
+}
+
+button.btn-devolucion {
+    background-color: #D9534F; /* Rojo */
+    color: white;
+}
+button.btn-devolucion:hover {
+    background-color: #C82333;
+}
+
+button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+/* Estilos de Estado */
+.estado-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+    color: white;
+}
+
+.estado-pendiente .estado-badge { background-color: #f6ad55; } /* Naranja */
+.estado-pendiente { border-left-color: #f6ad55; }
+
+.estado-recibido .estado-badge { background-color: #5CB85C; } /* Verde */
+.estado-recibido { border-left-color: #5CB85C; }
+
+.estado-devolucion-solicitada .estado-badge { background-color: #D9534F; } /* Rojo */
+.estado-devolucion-solicitada { border-left-color: #D9534F; }
+
+/* Mensaje de error */
+.error-mensaje {
+    color: #D9534F;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 600px) {
+    .compra-item {
+        flex-direction: column; /* Apila todo en móvil */
+    }
+    .compra-acciones {
+        flex-basis: auto; /* Ancho automático en móvil */
+    }
+}

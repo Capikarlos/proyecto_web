@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Compras</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/popup.css">
+    <link rel="stylesheet" href="/css/mis-compras.css"> <!-- CSS Nuevo -->
+</head>
+<body>
+
+    <!-- Contenedor del Menú (se carga por JS) -->
+    <div id="menu-contenedor"></div>
+
+    <main class="contenedor-principal">
+        <h2>Mi Historial de Compras</h2>
+        <p>Aquí puedes ver todos los productos que has comprado y su estado.</p>
+        
+        <!-- Contenedor donde JS cargará las compras -->
+        <section id="lista-compras">
+            <p>Cargando historial de compras...</p>
+        </section>
+    </main>
+
+    <script src="/js/menu.js"></script>
+    <script src="/js/mis-compras.js"></script> <!-- JS Nuevo -->
+</body>
+</html>

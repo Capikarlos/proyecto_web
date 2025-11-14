@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Usamos localStorage SOLO para los términos, ¡eso está bien!
     let terminosAceptados = localStorage.getItem('terminosAceptados') === 'true';
 
+// --- INICIA EL BLOQUE CORREGIDO ---
     /* MODAL TÉRMINOS */
     function verificarTerminos() {
         if (!terminosAceptados) {
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         verificarTerminos(); // Re-evalúa por si acaso
     });
     /* MODAL TÉRMINOS */
+    // --- TERMINA EL BLOQUE CORREGIDO ---
 
 
 
