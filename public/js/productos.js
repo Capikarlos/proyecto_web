@@ -43,17 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-    /**
-     * ¡MODIFICADO! Estas funciones ahora solo calculan la nueva cantidad
-     * y llaman a la función principal 'actualizarItemCarrito'.
-     */
     function agregarAlCarrito(producto) {
         const item = carritoGlobal.find((i) => i.id === producto.id) || { cantidad: 0 };
         const stock = Number(producto.stock);
 
         if (Number.isFinite(stock) && item.cantidad >= stock) {
-            alert(`⚠️ Solo hay ${stock} unidades disponibles de "${producto.nombre}".`);
+            alert(`Solo hay ${stock} unidades disponibles de "${producto.nombre}".`);
             return;
         }
 
@@ -70,15 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
         actualizarItemCarrito(productoId, 0); // Poner cantidad 0 elimina
     }
 
-    // ¡MODIFICADO! Lee de nuestra variable global
     function cantidadEnCarrito(productoId) {
         const item = carritoGlobal.find((i) => i.id === productoId);
         return item ? item.cantidad : 0;
     }
 
-    /**
-     * ¡MODIFICADO! Ahora carga productos Y el carrito al iniciar.
-     */
     async function cargarDatos() {
         try {
             // Cargar en paralelo productos y carrito

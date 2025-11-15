@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         fondoDifuminado.addEventListener("click", cerrarMenu);
         document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarMenu(); });
 
-        // 6) ... (Tu código para insertar el botón del carrito va aquí - SIN CAMBIOS) ...
         const ruta = window.location.pathname;
         const nombreArchivo = ruta.substring(ruta.lastIndexOf("/") + 1) || "index.html";
         if (nombreArchivo === "productos.html" || nombreArchivo === "carrito.html") {

@@ -1,4 +1,13 @@
-/* productos.css */
+/* Definición de Variables de Color */
+:root {
+    --color-primario: #ffb000;
+    --color-primario-hover: #e69e00;
+    --color-peligro: #ff3b30;
+    --color-texto: #111111;
+}
+
+/* 📦 PRODUCTOS (productos.html) */
+/* ---------------------- */
 .grid-productos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -93,26 +102,6 @@
     min-width: 36px;
     text-align: center;
     font-weight: 700;
-}
-
-/* carrito badge */
-.btn-carrito {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    position: relative;
-}
-
-.badge {
-    background: #ff3b30;
-    color: white;
-    border-radius: 999px;
-    padding: 2px 6px;
-    font-size: 12px;
-    position: relative;
-    top: -8px;
-    left: -6px;
 }
 
 /* --- modal --- */
@@ -392,4 +381,57 @@
     #btn-finalizar {
         width: 100%;
     }
+}
+
+/* 🛒 BOTÓN CARRITO (HEADER) - VERSIÓN DEFINITIVA
+   Estas son las nuevas reglas. 
+   Las antiguas .btn-carrito y .badge han sido eliminadas.
+--------------------------------------------------- */
+
+/* El contenedor del botón */
+#btn-carrito {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative; /* Contenedor para el badge */
+    padding: 8px;
+    color: #333; /* Color del icono SVG */
+    transition: color 0.2s ease;
+    line-height: 1; /* Asegura que no tenga altura extra */
+}
+
+/* Estilo del icono SVG que agregaremos en el Paso 2 */
+#btn-carrito svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor; /* Hereda el color de #btn-carrito */
+    display: block; /* Elimina espacio extra inferior */
+}
+
+#btn-carrito:hover {
+    color: var(--color-primario); /* Usa la variable definida al inicio */
+}
+
+/* El badge (burbuja roja) */
+#contador-carrito {
+    background: var(--color-peligro); /* Usa la variable definida al inicio */
+    color: white;
+    border-radius: 50%; /* Círculo perfecto */
+    font-size: 12px;
+    font-weight: 700;
+    
+    /* Posicionamiento absoluto sobre el botón */
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    /* Dimensiones y centrado del número */
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }

@@ -61,7 +61,7 @@ app.use((req, res, next) => {
 // Proteger archivos .html
 app.use((req, res, next) => {
     const url = req.path;
-    const paginasPublicas = ['/login.html', '/register.html', '/index.html', '/', '/componentes/menu.html'];
+    const paginasPublicas = ['/login.html', '/register.html', '/', '/componentes/menu.html'];
     if (url.endsWith('.html') && !paginasPublicas.includes(url)) {
         if (!req.session || !req.session.usuario) {
             return res.redirect('/login.html');
